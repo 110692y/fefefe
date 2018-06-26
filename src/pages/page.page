@@ -1,0 +1,133 @@
+<apex:page controller="TERF_Controller_EditMR" showHeader="false" tabStyle="TERF_MR__c" >
+    <apex:form >
+        <head><style type="text/css">
+   main {
+    font-size: 150%;
+    font-family: Arial;
+    }
+   link {
+    font-size: 120%;
+    font-family: Arial;
+    color: #0000FF;
+    }
+  </style>
+        </head>
+        <body>
+        <main>
+            Авансовый отчет за период: <b>{!MR.TERF_MR_month__c} {!MR.TERF_MR_year__c}</b><br/>
+            Сотрудник: <b>{!MR.TERF_MR_employee__r.TERF_EMP_FirstName__c} {!MR.TERF_MR_employee__r.TERF_EMP_SecondName__c}</b><br/>
+
+
+            <apex:pageBlock >
+                <apex:pageBlockButtons >
+                    <apex:commandButton action="{!gotoRU_TERs_Home}" value="Вернуться на главную страницу"/>
+                    <apex:commandButton value="Печать всего отчета" onclick="window.open('/apex/TERF_Print?id={!MR.Id}')" rendered="{!MR.TERF_MR_RIcount__c > 0}"/>
+                </apex:pageBlockButtons>
+
+                <apex:outputPanel rendered="{!MR.Id!=null}">
+                    <apex:pageBlockSection title="Путевой лист" columns="1" >
+                        <apex:pageBlockSectionItem >
+                            <apex:commandButton action="{!AddCar}" value="Добавить путевой лист" />
+                            <apex:commandButton value="Печать путевого листа" onclick="window.open('/apex/TERF_PrintCar?id={!MR.Id}')" rendered="{!MR.TERF_MR_CarCount__c > 0}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockTable value="{!MR.TERF_RI__r}" var="report">
+                            <apex:column rendered="{!if(report.TERF_RI_Type__c=='Путевой лист' && report.TERF_RI_Disable__c == false, true, false)}">
+                                <a href="/apex/TERF_EditCar?id={!report.Id}" target="_blank">{!report.TERF_RI_Car__r.TERF_CAR_Manufacture__c} {!report.TERF_RI_Car__r.TERF_CAR_Model__c}, {!report.TERF_RI_Car__r.TERF_CAR_Number__c} </a>
+                            </apex:column>
+                        </apex:pageBlockTable>
+                    </apex:pageBlockSection>
+                </apex:outputPanel>
+
+                <apex:outputPanel rendered="{!MR.Id!=null}">
+                    <apex:pageBlockSection title="Командировки" columns="1">
+                        <apex:pageBlockSectionItem >
+                            <apex:commandButton action="{!AddBT}" value="Добавить командировку"/>
+                            <apex:commandButton value="Печать документов по командировкам" onclick="window.open('/apex/TERF_PrintBT?id={!MR.Id}')" rendered="{!MR.TERF_MR_BTcount__c > 0}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockTable value="{!MR.TERF_RI__r}" var="report">
+                            <apex:column headerValue="Редактировать" rendered="{!if(report.TERF_RI_Type__c=='Командировка' && report.TERF_RI_Disable__c == false, true, false)}">
+                                <a href="/apex/TERF_EditBT?id={!report.Id}" target="_blank">{!report.TERF_RI_Type__c}: {!report.TERF_RI_City__c}, {!report.TERF_RI_Country__c}, </a>
+                            </apex:column>
+                        </apex:pageBlockTable>
+                    </apex:pageBlockSection>
+                </apex:outputPanel>
+
+                <apex:outputPanel rendered="{!MR.Id!=null}">
+                    <apex:pageBlockSection title="Представительские расходы" columns="1">
+                        <apex:pageBlockSectionItem >
+                            <apex:commandButton action="{!AddMeeting}" value="Добавить представительский расход"/>
+                            <apex:commandButton value="Печать документов о представительсих расходах" onclick="window.open('/apex/TERF_PrintMeeting?id={!MR.Id}')" rendered="{!MR.TERF_MR_MeetingCount__c > 0}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockTable value="{!MR.TERF_RI__r}" var="report">
+                            <apex:column headerValue="Редактировать" rendered="{!if(report.TERF_RI_Type__c=='Представительские расходы' && report.TERF_RI_Disable__c == false, true, false)}">
+                                <a href="/apex/TERF_EditMeeting?id={!report.Id}" target="_blank">
+                                    <apex:outputText value="{0, date, dd.MM.yyyy}"><apex:param value="{!report.TERF_RI_startDate__c}" /></apex:outputText> - {!report.TERF_RI_City__c}, {!report.TERF_RI_Place__c}</a>
+                            </apex:column>
+                        </apex:pageBlockTable>
+                    </apex:pageBlockSection>
+                </apex:outputPanel>
+
+                <apex:outputPanel rendered="{!MR.Id!=null}">
+                    <apex:pageBlockSection title="Конференции / Мероприятия" columns="1">
+                        <apex:pageBlockSectionItem >
+                            <apex:commandButton action="{!AddConf}" value="Добавить конференцию"/>
+                            <apex:commandButton value="Печать документов по конференциям" onclick="window.open('/apex/TERF_PrintConf?id={!MR.Id}')" rendered="{!MR.TERF_MR_ConfCount__c > 0}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockTable value="{!MR.TERF_RI__r}" var="report">
+                            <apex:column headerValue="Редактировать" rendered="{!if(report.TERF_RI_Type__c=='Конференция' && report.TERF_RI_Disable__c == false, true, false)}">
+                                <a href="/apex/TERF_EditConf?id={!report.Id}" target="_blank">
+                                    <apex:outputText value="{0, date, dd.MM.yyyy}"><apex:param value="{!report.TERF_RI_startDate__c}"/></apex:outputText> - {!report.TERF_RI_ConferenceName__c}, {!report.TERF_RI_Place__c}</a>
+                            </apex:column>
+                        </apex:pageBlockTable>
+                    </apex:pageBlockSection>
+                </apex:outputPanel>
+
+                <apex:outputPanel rendered="{!MR.Id!=null}">
+                    <apex:pageBlockSection title="Заявление" columns="1">
+                        <apex:pageBlockSectionItem >
+                            <apex:commandButton action="{!AddTax}" value="Добавить заявление" rendered="{!MR.TERF_MR_TaxCount__c = 0}"/>
+                            <apex:commandButton value="Печать заявления" onclick="window.open('/apex/TERF_PrintTax?id={!MR.Id}')" rendered="{!MR.TERF_MR_TaxCount__c > 0}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockTable value="{!MR.TERF_RI__r}" var="report">
+                            <apex:column headerValue="Редактировать" rendered="{!if(report.TERF_RI_Type__c=='Заявление' && report.TERF_RI_Disable__c == false, true, false)}">
+                                <a href="/apex/TERF_EditTax?id={!report.Id}" target="_blank">{!report.TERF_RI_Type__c}</a>
+                            </apex:column>
+                        </apex:pageBlockTable>
+                    </apex:pageBlockSection>
+                </apex:outputPanel>
+
+                <apex:outputPanel rendered="{!MR.Id!=null}">
+                    <apex:pageBlockSection title="Подарки" columns="1">
+                        <apex:pageBlockSectionItem >
+                            <apex:commandButton action="{!AddPresent}" value="Добавить подарок"/>
+                            <apex:commandButton value="Печать документов о подарках" onclick="window.open('/apex/TERF_PrintPresent?id={!MR.Id}')" rendered="{!MR.TERF_MR_PresentCount__c > 0}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockTable value="{!MR.TERF_RI__r}" var="report">
+                            <apex:column headerValue="Редактировать" rendered="{!if(report.TERF_RI_Type__c=='Подарки' && report.TERF_RI_Disable__c == false, true, false)}">
+                                <a href="/apex/TERF_EditPresent?id={!report.Id}" target="_blank">{!report.TERF_RI_Description__c}, повод: {!report.TERF_RI_PresentGoal__c}</a>
+                            </apex:column>
+                        </apex:pageBlockTable>
+                    </apex:pageBlockSection>
+                </apex:outputPanel>
+
+                <apex:outputPanel rendered="{!MR.Id!=null}">
+                    <apex:pageBlockSection title="Список участников независимого мероприятия" columns="1">
+                        <apex:pageBlockSectionItem >
+                            <apex:commandButton action="{!AddPartList}" value="Добавить список участников"/>
+                            <apex:commandButton value="Печать списков участников" onclick="window.open('/apex/TERF_PrintpartList?id={!MR.Id}')" rendered="{!MR.TERF_MR_PartListCount__c > 0}"/>
+                        </apex:pageBlockSectionItem>
+                        <apex:pageBlockTable value="{!MR.TERF_RI__r}" var="report">
+                            <apex:column headerValue="Редактировать" rendered="{!if(report.TERF_RI_Type__c=='Список участников' && report.TERF_RI_Disable__c == false, true, false)}">
+                                <a href="/apex/TERF_EditPartList?id={!report.Id}" target="_blank"><apex:outputText value="{0, date, dd.MM.yyyy}"><apex:param value="{!report.TERF_RI_startDate__c}" /></apex:outputText> - {!report.TERF_RI_City__c}, {!report.TERF_RI_Place__c}</a>
+                            </apex:column>
+                        </apex:pageBlockTable>
+                    </apex:pageBlockSection>
+                </apex:outputPanel>
+
+
+
+            </apex:pageBlock>
+        </main>
+        </body>
+    </apex:form>
+</apex:page>
