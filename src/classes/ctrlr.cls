@@ -76,7 +76,7 @@ public class TERF_Controller_EditMR{
         report.TERF_RI_Company__c = report.TERF_RI_MR__r.TERF_MR_employee__r.TERF_Emp_CompanyAlias__c;
         insert report;
         report = [select Id, Name, TERF_RI_Type__c, TERF_RI_MR__c from TERF_RI__c where id=: report.Id];
-        PageReference pageRef = new PageReference('/apex/TrrrrrrERF_EditTax');
+        PageReference pageRef = new PageReference('/apex/TrjjjrrrrERF_EditTax');
         pageRef.getParameters().put('id',report.Id);
         return pageRef;
     }
